@@ -9,7 +9,6 @@ import Postform from "./parts/postform.js";
 import WarningSign from "./parts/warningSign.js";
 import TopLink from "./parts/topLink.js";
 import BottomLink from "./parts/bottomLink.js";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { Divider, useMediaQuery } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
 import axios from "axios";
@@ -18,23 +17,11 @@ const Main = () => {
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
 
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
-  const theme = React.useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          type: prefersDarkMode ? "dark" : "light",
-        },
-      }),
-    [prefersDarkMode]
-  );
-
   const initialized = async () => {
     axios
       .get("/thread/get")
       .then((res) => {
-        // console.table(res.data.Threads);
+        // console.table(res.data.Threads)
         console.log(res.data.Threads);
         setData(res.data.Threads);
       })
@@ -44,8 +31,6 @@ const Main = () => {
       .finally(() => {
         /* 不論失敗成功皆會執行 */
       });
-
-    // call api
   };
 
   useEffect(() => {
@@ -53,28 +38,26 @@ const Main = () => {
   }, []); //[0]動作[1]會觸發動作的事件
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className="Main">
-        <TopLink />
-        <Header />
+    <div className="Main">
+      <TopLink />
+      <Header />
 
-        <div className=" container">
-          <Postform type={"post"} initialized={initialized}/>
-          <WarningSign />
-        </div>
-
-        {/* <div className=" d-flex justify-content-center m-2">
-          <Pagination count={5} shape="rounded" color="primary" />
-        </div> */}
-        <Divider />
-
-        <ListThreads threads={data} initialized={initialized}/>
-        <div className=" d-flex justify-content-center m-2">
-          <Pagination count={5} shape="rounded" color="primary" />
-        </div>
-        <BottomLink />
+      <div className=" container">
+        <Postform type={"post"} initialized={initialized} />
+        <WarningSign />
       </div>
-    </ThemeProvider>
+
+      <div className=" d-flex justify-content-center m-2">
+        <Pagination count={5} shape="rounded" color="primary" />
+      </div>
+      <Divider />
+
+      <ListThreads threads={data} initialized={initialized} />
+      <div className=" d-flex justify-content-center m-2">
+        <Pagination count={5} shape="rounded" color="primary" />
+      </div>
+      <BottomLink />
+    </div>
   );
 };
 

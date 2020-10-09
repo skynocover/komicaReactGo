@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BottomLink = () => {
+export default () => {
   const classes = useStyles();
   const [state, setState] = React.useState(false);
   const toggleDrawer = (open) => (event) => {
@@ -53,5 +53,3 @@ const BottomLink = () => {
     </div>
   );
 };
-
-export default BottomLink;
