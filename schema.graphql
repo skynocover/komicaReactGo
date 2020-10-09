@@ -1,0 +1,6 @@
+type Thread {
+  id: ID!
+  text: String!
+  done: Boolean!
+  user: User!
+}
