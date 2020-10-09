@@ -4,7 +4,7 @@ import "../mainstyle.css";
 import Button from "@material-ui/core/Button";
 import { Divider } from "@material-ui/core";
 
-const Header = () => {
+export default () => {
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -41,5 +41,3 @@ const Header = () => {
     </div>
   );
 };
-
-export default Header;

@@ -73,9 +73,6 @@ const ReportBtm = ({ handleClick }) => {
 
 export default function ThreadLabel({ post, initialized }) {
   const [open, setOpen] = React.useState(false);
-  const handleClick = () => {
-    setOpen(true);
-  };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -102,8 +99,9 @@ export default function ThreadLabel({ post, initialized }) {
       {/* <span className="text-secondary">[{dayjs.unix(post.time).format("YYYY-MM-DD HH:mm:ss")}]</span> */}
       <span className="text-secondary">[{post.time} ID:{post.poster_id}]</span>
       <span className="text-info">No:{post.id}</span>
-      <ReportBtm handleClick={handleClick} />
+      <ReportBtm handleClick={()=>{setOpen(true)}} />
       {post.title && <ReplyBtm parent={post.id} initialized={initialized} />}
+     
       <div className={classes.root}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="success">

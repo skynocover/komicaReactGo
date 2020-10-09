@@ -16,7 +16,7 @@ func ThreadGet(ctx *fasthttp.RequestCtx) {
 	}
 
 	//查詢資料
-	rows, err := database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY id Desc")
+	rows, err := database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY replytime Desc")
 	if err != nil {
 		rowfail := errormsg.ErrorQuerySQL
 		ctx.Write(rowfail.ToBytes())
@@ -54,8 +54,5 @@ func ThreadGet(ctx *fasthttp.RequestCtx) {
 	}
 
 	success := errormsg.SUCCESS
-
-	log.Println(threads)
-
 	ctx.Write(success.ToBytesWithStruct(threads))
 }

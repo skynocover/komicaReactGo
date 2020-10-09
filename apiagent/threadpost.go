@@ -28,21 +28,25 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 	}
 
 	ip := ctx.RemoteIP()
-	log.Println("ip", ip)
 
 	shaip := fmt.Sprintf("%x\n", crc32.ChecksumIEEE([]byte(ip)))
-	//INSERT INTO `posts` (`id`, `poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`, `parent_post`, `sage`)
-	//VALUES ('0', '651f5f40', 'a', 'b', 'cds', 'adgg', '0', NULL, '0');
-	log.Println(post)
 
-	// sqlcommand := fmt.Sprintf("INSERT INTO `posts` (`poster_id`, `title`,`name`,`content`,`imageurl`,`parent_post`) VALUES (%s,%s,%s,%s,%s,%s);", shaip,
-	// 	post.Title, post.Name, post.Content, post.Image, " ")
 	_, err := database.DB.Exec("INSERT INTO `posts` (`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`, `parent_post`, `sage`) VALUES(?,?,?,?,?,?,?,?)", shaip, post.Title, post.Name, post.Content, post.Image, post.WithImg, post.Parent, post.Sage)
 	if err != nil {
 		log.Println("insert the sql fail, err: ", err)
 		sqlfail := errormsg.ErrorInsertSQL
 		ctx.Write(sqlfail.ToBytes())
 		return
+	}
+
+	if !post.Sage {
+		_, err := database.DB.Exec("UPDATE `posts` SET replytime=NOW() WHERE posts.id=?", post.Parent)
+		if err != nil {
+			log.Println("insert the sql fail, err: ", err)
+			sqlfail := errormsg.ErrorInsertSQL
+			ctx.Write(sqlfail.ToBytes())
+			return
+		}
 	}
 
 	success := errormsg.SUCCESS

@@ -23,15 +23,16 @@ func DBconn() (err error) {
 
 // Thread 討論串
 type Thread struct {
-	ID       string `json:"id"`
-	PosterID string `json:"poster_id"`
-	Title    string `json:"title"`
-	Name     string `json:"name"`
-	Content  string `json:"content"`
-	Image    string `json:"image" db:"imageurl"`
-	WithImg  bool   `json:"with_img" db:"withimg"`
-	Time  string  `json:"time"`
-	Reply []Reply `json:"reply"`
+	ID        string  `json:"id"`
+	PosterID  string  `json:"poster_id"`
+	Title     string  `json:"title"`
+	Name      string  `json:"name"`
+	Content   string  `json:"content"`
+	Image     string  `json:"image" db:"imageurl"`
+	WithImg   bool    `json:"with_img" db:"withimg"`
+	Time      string  `json:"time"`
+	Reply     []Reply `json:"reply"`
+	ReplyTime string  `json:"replytime"`
 }
 
 // Reply 討論串回應

@@ -48,7 +48,7 @@ const PostItem = ({
   parent,
   drawOpen,
   initialized,
-  initPost
+  initPost,
 }) => {
   const classes = useStyles();
   const [withImage, setWithImage] = React.useState(true);
@@ -92,10 +92,10 @@ const PostItem = ({
         className={classes.margin}
         size="small"
         onClick={() => {
+          initialized();
           Post(title, image, content, name, withImage, sage, parent);
           (drawOpen != null && drawOpen(false));
           (initPost!=null && initPost())
-          initialized();
         }}
       >
         <NavigationIcon className={classes.extendedIcon} />
