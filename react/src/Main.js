@@ -16,10 +16,32 @@ import axios from "axios";
 const Main = () => {
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
+  const [pageCount, setPageCount] = useState(1);
+  const [page, setpage] = useState(1);
 
-  const initialized = async () => {
+  const handlePage = async (event, value) => {
+    setpage(value);
+    await getthread(value);
+    await getpagecount();
+  };
+
+  const getpagecount = async () => {
     axios
-      .get("/thread/get")
+      .get("/thread/count")
+      .then((res) => {
+        setPageCount(Math.ceil(res.data.Count / 10));
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        /* 不論失敗成功皆會執行 */
+      });
+  };
+
+  const getthread = async (page) => {
+    axios
+      .get("/thread/get?page=" + page)
       .then((res) => {
         // console.table(res.data.Threads)
         console.log(res.data.Threads);
@@ -31,6 +53,11 @@ const Main = () => {
       .finally(() => {
         /* 不論失敗成功皆會執行 */
       });
+  };
+
+  const initialized = async () => {
+    getpagecount();
+    getthread(1);
   };
 
   useEffect(() => {
@@ -48,13 +75,25 @@ const Main = () => {
       </div>
 
       <div className=" d-flex justify-content-center m-2">
-        <Pagination count={5} shape="rounded" color="primary" />
+        <Pagination
+          count={pageCount}
+          shape="rounded"
+          color="primary"
+          page={page}
+          onChange={handlePage}
+        />
       </div>
       <Divider />
 
       <ListThreads threads={data} initialized={initialized} />
       <div className=" d-flex justify-content-center m-2">
-        <Pagination count={5} shape="rounded" color="primary" />
+        <Pagination
+          count={pageCount}
+          shape="rounded"
+          color="primary"
+          page={page}
+          onChange={handlePage}
+        />
       </div>
       <BottomLink />
     </div>

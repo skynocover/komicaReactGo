@@ -28,6 +28,7 @@ func main() {
 	router.NotFound = fasthttp.FSHandler("build", 0)
 	router.POST("/thread/post", apiagent.ThreadPost)
 	router.GET("/thread/get", apiagent.ThreadGet)
+	router.GET("/thread/count", apiagent.ThreadCount)
 	router.POST("/report/post", apiagent.ReportPost)
 	// router.GET("/api/thread", apiagent.ReadThread)
 	if err := fasthttp.ListenAndServe(":"+config.Config.Server.Listen, router.Handler); err != nil {
