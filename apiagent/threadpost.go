@@ -7,6 +7,7 @@ import (
 	"komicaRG/database"
 	"komicaRG/errormsg"
 	"log"
+	"strings"
 
 	"github.com/valyala/fasthttp"
 )
@@ -27,11 +28,29 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	ip := ctx.RemoteIP()
+	if post.Name == "" {
+		post.Name = "某個懶得打名稱的人"
+	}
+
+	ip := func() string {
+		clientIP := string(ctx.Request.Header.Peek("X-Forwarded-For"))
+		if index := strings.IndexByte(clientIP, ','); index >= 0 {
+			clientIP = clientIP[0:index]
+		}
+		clientIP = strings.TrimSpace(clientIP)
+		if len(clientIP) > 0 {
+			return clientIP
+		}
+		clientIP = strings.TrimSpace(string(ctx.Request.Header.Peek("X-Real-Ip")))
+		if len(clientIP) > 0 {
+			return clientIP
+		}
+		return ctx.RemoteIP().String()
+	}()
 
 	shaip := fmt.Sprintf("%x\n", crc32.ChecksumIEEE([]byte(ip)))
 
-	_, err := database.DB.Exec("INSERT INTO `posts` (`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`, `parent_post`, `sage`) VALUES(?,?,?,?,?,?,?,?)", shaip, post.Title, post.Name, post.Content, post.Image, post.WithImg, post.Parent, post.Sage)
+	_, err := database.DB.Exec("INSERT INTO `posts` (`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`, `parent_post`, `sage`,`ip`) VALUES(?,?,?,?,?,?,?,?,?)", shaip, post.Title, post.Name, post.Content, post.Image, post.WithImg, post.Parent, post.Sage, ip)
 	if err != nil {
 		log.Println("insert the sql fail, err: ", err)
 		sqlfail := errormsg.ErrorInsertSQL

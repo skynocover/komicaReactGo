@@ -4,6 +4,7 @@ import (
 	"komicaRG/database"
 	"komicaRG/errormsg"
 	"log"
+	"strconv"
 
 	"github.com/valyala/fasthttp"
 )
@@ -11,13 +12,21 @@ import (
 // ThreadGet get the post
 func ThreadGet(ctx *fasthttp.RequestCtx) {
 
+	page, err := strconv.Atoi(string(ctx.FormValue("page")))
+	if err != nil {
+		valuefail := errormsg.ErrorParam
+		ctx.Write(valuefail.ToBytes())
+		return
+	}
+
 	var threads struct {
 		Threads []database.Thread
 	}
 
 	//查詢資料
-	rows, err := database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY replytime Desc")
+	rows, err := database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY replytime Desc limit ?,10", (page-1)*10)
 	if err != nil {
+		log.Println(err)
 		rowfail := errormsg.ErrorQuerySQL
 		ctx.Write(rowfail.ToBytes())
 		return
