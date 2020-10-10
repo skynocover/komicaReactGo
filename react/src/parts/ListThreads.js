@@ -5,11 +5,11 @@ import Image from "../components/image.js";
 import ThreadLabel from "../components/threadLabel.js";
 import Divider from "@material-ui/core/Divider";
 const ReactMarkdown = require("react-markdown");
-const Reply = ({ reply ,initialized}) => {
+const Reply = ({ reply }) => {
   return (
     <>
       <div className="row pt-2 justify-content-center">
-        <ThreadLabel post={reply} initialized={initialized}/>
+        <ThreadLabel post={reply} />
       </div>
       <div className="row p-2 justify-content-center">
         {reply.image && (
@@ -26,11 +26,11 @@ const Reply = ({ reply ,initialized}) => {
   );
 };
 
-const Thread = ({ thread,initialized }) => {
+const Thread = ({ thread }) => {
   return (
     <>
       <div className="row pt-2 justify-content-center">
-        <ThreadLabel post={thread} initialized={initialized} />
+        <ThreadLabel post={thread} />
       </div>
       <div className="row p-2 justify-content-center ">
         {thread.image && (
@@ -45,9 +45,8 @@ const Thread = ({ thread,initialized }) => {
       </div>
       <div className="row justify-content-center">
         <div className="container">
-          {thread.reply!=null && thread.reply.map((item) => (
-            <Reply key={item.id} reply={item} initialized={initialized}/>
-          ))}
+          {thread.reply != null &&
+            thread.reply.map((item) => <Reply key={item.id} reply={item} />)}
         </div>
       </div>
 
@@ -56,11 +55,11 @@ const Thread = ({ thread,initialized }) => {
   );
 };
 
-const ListThreads = ({ threads,initialized }) => {
+const ListThreads = ({ threads }) => {
   return (
     <div className="container">
       {threads.map((item) => (
-        <Thread key={item.id} thread={item} initialized={initialized} />
+        <Thread key={item.id} thread={item} />
       ))}
     </div>
   );

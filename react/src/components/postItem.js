@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../mainstyle.css";
 import { makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
 import Checkbox from "@material-ui/core/Checkbox";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-
+import { AppContext } from "../AppContext";
 import axios from "axios";
 
 const Post = (title, image, content, name, withImage, sage, parent) => {
@@ -47,9 +47,9 @@ const PostItem = ({
   image,
   parent,
   drawOpen,
-  initialized,
   initPost,
 }) => {
+  const appCtx = useContext(AppContext);
   const classes = useStyles();
   const [withImage, setWithImage] = React.useState(true);
   const [sage, setSage] = React.useState(false);
@@ -92,10 +92,10 @@ const PostItem = ({
         className={classes.margin}
         size="small"
         onClick={() => {
-          initialized();
+          appCtx.getthread(1);
           Post(title, image, content, name, withImage, sage, parent);
-          (drawOpen != null && drawOpen(false));
-          (initPost!=null && initPost())
+          drawOpen != null && drawOpen(false);
+          initPost != null && initPost();
         }}
       >
         <NavigationIcon className={classes.extendedIcon} />

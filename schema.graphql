@@ -4,3 +4,8 @@ type Thread {
   done: Boolean!
   user: User!
 }
+
+type Query {
+  getLastThread: [Thread]
+  getFollowingThread: [Thread]
+}

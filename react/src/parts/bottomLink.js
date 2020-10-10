@@ -1,12 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../mainstyle.css";
 
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { makeStyles } from "@material-ui/core/styles";
-
-import Reportform from "../components/reportform.js";
-import Drawer from "@material-ui/core/Drawer";
+import { AppContext } from "../AppContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,16 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default () => {
   const classes = useStyles();
-  const [state, setState] = React.useState(false);
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setState(open);
-  };
+  const appCtx = useContext(AppContext);
   return (
     <div className="d-flex justify-content-center">
       <div className={classes.root}>
@@ -39,17 +28,12 @@ export default () => {
           color="primary"
           aria-label="text primary button group"
         >
-          <Button onClick={toggleDrawer(true)}>錯誤回報</Button>
+          <Button onClick={appCtx.toggleReport(true)}>錯誤回報</Button>
           <Button href="https://github.com/skynocover" target="_blank">
             Github
           </Button>
         </ButtonGroup>
       </div>
-      <Drawer anchor="bottom" open={state} onClose={toggleDrawer(false)}>
-        <div className="m-3">
-          <Reportform />
-        </div>
-      </Drawer>
     </div>
   );
 };

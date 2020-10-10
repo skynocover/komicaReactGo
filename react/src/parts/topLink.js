@@ -5,9 +5,6 @@ import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Reportform from "../components/reportform.js";
-import Drawer from "@material-ui/core/Drawer";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -22,15 +19,7 @@ const useStyles = makeStyles((theme) => ({
 const TopLink = () => {
   const classes = useStyles();
   const [state, setState] = React.useState(false);
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setState(open);
-  };
+
   return (
     <div className="d-flex justify-content-end">
       <div className={classes.root}>
@@ -38,7 +27,6 @@ const TopLink = () => {
           variant="text"
           color="primary"
           aria-label="text primary button group"
-          
         >
           <Button href="https://www.komica.org" target="_blank">
             komica
@@ -48,11 +36,6 @@ const TopLink = () => {
           </Button>
         </ButtonGroup>
       </div>
-      <Drawer anchor="bottom" open={state} onClose={toggleDrawer(false)}>
-        <div className="m-3">
-          <Reportform />
-        </div>
-      </Drawer>
     </div>
   );
 };

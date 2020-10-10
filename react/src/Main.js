@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import logo from "./logo.svg";
 
 import "./mainstyle.css";
@@ -12,90 +12,88 @@ import BottomLink from "./parts/bottomLink.js";
 import { Divider, useMediaQuery } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
 import axios from "axios";
+import { makeStyles } from "@material-ui/core/styles";
+import { AppContext } from "./AppContext";
+import Reportform from "./components/reportform.js";
+import Drawer from "@material-ui/core/Drawer";
+import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
+// import { Pagination } from 'antd';
 
 const Main = () => {
+  const appCtx = useContext(AppContext);
   const [error, setError] = useState(false);
-  const [data, setData] = useState([]);
-  const [pageCount, setPageCount] = useState(1);
-  const [page, setpage] = useState(1);
-
+  const [pages, setPages] = useState(1);
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      width: "100%",
+      "& > * + *": {
+        marginTop: theme.spacing(2),
+      },
+    },
+  }));
+  const classes = useStyles();
   const handlePage = async (event, value) => {
-    setpage(value);
-    await getthread(value);
-    await getpagecount();
-  };
-
-  const getpagecount = async () => {
-    axios
-      .get("/thread/count")
-      .then((res) => {
-        setPageCount(Math.ceil(res.data.Count / 10));
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        /* 不論失敗成功皆會執行 */
-      });
-  };
-
-  const getthread = async (page) => {
-    axios
-      .get("/thread/get?page=" + page)
-      .then((res) => {
-        // console.table(res.data.Threads)
-        console.log(res.data.Threads);
-        setData(res.data.Threads);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        /* 不論失敗成功皆會執行 */
-      });
-  };
-
-  const initialized = async () => {
-    getpagecount();
-    getthread(1);
+    setPages(value);
+    await appCtx.getthread(value);
   };
 
   useEffect(() => {
-    initialized();
+    appCtx.getthread(1);
   }, []); //[0]動作[1]會觸發動作的事件
-
+  const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  };
   return (
     <div className="Main">
       <TopLink />
       <Header />
-
       <div className=" container">
-        <Postform type={"post"} initialized={initialized} />
+        <Postform type={"post"} />
         <WarningSign />
       </div>
-
       <div className=" d-flex justify-content-center m-2">
         <Pagination
-          count={pageCount}
+          count={appCtx.pageCount}
           shape="rounded"
           color="primary"
-          page={page}
+          page={appCtx.page}
           onChange={handlePage}
         />
       </div>
       <Divider />
-
-      <ListThreads threads={data} initialized={initialized} />
+      <ListThreads threads={appCtx.thread} />
       <div className=" d-flex justify-content-center m-2">
         <Pagination
-          count={pageCount}
+          count={appCtx.pageCount}
           shape="rounded"
           color="primary"
-          page={page}
+          page={appCtx.page}
           onChange={handlePage}
         />
       </div>
       <BottomLink />
+
+      <Drawer
+        anchor="bottom"
+        open={appCtx.reportDraw}
+        onClose={appCtx.toggleReport(false)}
+      >
+        <div className="m-3">
+          <Reportform />
+        </div>
+      </Drawer>
+      <div className={classes.root}>
+        <Snackbar
+          open={appCtx.success}
+          autoHideDuration={1000}
+          onClose={appCtx.SuccessClose}
+        >
+          <Alert onClose={appCtx.SuccessClose} severity="success">
+            {appCtx.successLabel}
+          </Alert>
+        </Snackbar>
+      </div>
     </div>
   );
 };

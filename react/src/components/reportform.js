@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../mainstyle.css";
 
 import TextField from "@material-ui/core/TextField";
@@ -10,16 +10,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import axios from "axios";
+import { AppContext } from "../AppContext";
 
-
-const ReportForm = ({ drawOpen,handleClick }) => {
+const ReportForm = () => {
   const [reason, setReason] = React.useState("bug");
   const [content, setContent] = React.useState("");
-  
-  const handleChange = (event) => {
-    setReason(event.target.value);
-  };
+  const appCtx = useContext(AppContext);
 
   const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -30,23 +26,6 @@ const ReportForm = ({ drawOpen,handleClick }) => {
       marginTop: theme.spacing(2),
     },
   }));
-  const Report = () => {
-    axios
-      .post("/report/post", {
-        reason,
-        content,
-      })
-      .then((res) => {
-        console.table(res.data);
-        handleClick();
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        /* 不論失敗成功皆會執行 */
-      });
-  };
 
   const classes = useStyles();
   return (
@@ -58,7 +37,9 @@ const ReportForm = ({ drawOpen,handleClick }) => {
             labelId="demo-simple-select-filled-label"
             id="demo-simple-select-filled"
             value={reason}
-            onChange={handleChange}
+            onChange={(event) => {
+              setReason(event.target.value);
+            }}
           >
             <MenuItem value={"bug"}>Bug</MenuItem>
             <MenuItem value={"del"}>刪文請求</MenuItem>
@@ -82,14 +63,13 @@ const ReportForm = ({ drawOpen,handleClick }) => {
           aria-label="add"
           size="small"
           onClick={() => {
-            Report();
-            drawOpen(false);
+            appCtx.Report(reason, content);
+            appCtx.setReportDraw(false);
           }}
         >
           <NavigationIcon />
           回報
         </Fab>
-        
       </div>
     </div>
   );

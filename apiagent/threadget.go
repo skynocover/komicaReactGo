@@ -21,10 +21,27 @@ func ThreadGet(ctx *fasthttp.RequestCtx) {
 
 	var threads struct {
 		Threads []database.Thread
+		Count int `json:"count"`
 	}
 
+	//查詢討論串筆數
+	rows, err := database.DB.Query("SELECT COUNT(*) FROM `posts` where parent_post IS NULL")
+	if err != nil {
+		log.Println(err)
+		rowfail := errormsg.ErrorQuerySQL
+		ctx.Write(rowfail.ToBytes())
+		return
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&threads.Count); err != nil {
+			log.Println(err)
+		}
+	}
+	rows.Close()
+
 	//查詢資料
-	rows, err := database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY replytime Desc limit ?,10", (page-1)*10)
+	rows, err = database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY replytime Desc limit ?,10", (page-1)*10)
 	if err != nil {
 		log.Println(err)
 		rowfail := errormsg.ErrorQuerySQL
