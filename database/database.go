@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"komicaRG/config"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -46,4 +47,21 @@ type Reply struct {
 	Sage       bool   `json"sage"`
 	WithImg    bool   `json:"with_img" db:"withimg"`
 	ParentPost string `json:"parent_post"`
+}
+
+// Log ...
+type Log struct {
+	ID      string `json:"id"`
+	IP      string `json:"ip"`
+	Content string `json:"content"`
+}
+
+// InserSQL insert into db
+func (logs *Log) InserSQL() {
+	log.Println(logs.Content)
+	_, err := DB.Exec("INSERT INTO `log` (`ip`, `content`) VALUES(?,?)", logs.IP, logs.Content)
+	if err != nil {
+		log.Println("insert the sql fail, err: ", err)
+		return
+	}
 }

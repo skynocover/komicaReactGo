@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import "../mainstyle.css";
 
-
 import { makeStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
@@ -22,7 +21,7 @@ const useStyles = makeStyles({
     height: 35,
   },
 });
-export default function Image({ image, imageID }) {
+export default function Image({image,ID}) {
   const classes = useStyles();
   const appCtx = useContext(AppContext);
   return (
@@ -40,7 +39,7 @@ export default function Image({ image, imageID }) {
           <Button color="primary" href={image} target="_blank">
             Link
           </Button>
-          <IconButton size="small" onClick={appCtx.toggleReport(true)}>
+          <IconButton size="small" onClick={appCtx.toggleReport(true,ID)}>
             <ReportIcon />
           </IconButton>
         </CardActions>

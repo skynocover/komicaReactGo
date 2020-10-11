@@ -17,13 +17,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PostItem = ({
-  type,
   title,
   name,
   content,
   image,
   parent,
-  drawOpen,
   initPost,
 }) => {
   const appCtx = useContext(AppContext);
@@ -46,7 +44,7 @@ const PostItem = ({
         }
         label="附圖"
       />
-      {type === "reply" && (
+      {parent && (
         <FormControlLabel
           control={
             <Checkbox
@@ -69,9 +67,8 @@ const PostItem = ({
         className={classes.margin}
         size="small"
         onClick={() => {
-          appCtx.getthread(1);
           appCtx.Post(title, image, content, name, withImage, sage, parent);
-          drawOpen != null && drawOpen(false);
+          appCtx.setReplyDraw(false)
           initPost != null && initPost();
         }}
       >

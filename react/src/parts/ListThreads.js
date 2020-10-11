@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../mainstyle.css";
 
 import Image from "../components/image.js";
 import ThreadLabel from "../components/threadLabel.js";
 import Divider from "@material-ui/core/Divider";
+import { AppContext } from "../AppContext";
+
 const ReactMarkdown = require("react-markdown");
 const Reply = ({ reply }) => {
   return (
@@ -14,7 +16,7 @@ const Reply = ({ reply }) => {
       <div className="row p-2 justify-content-center">
         {reply.image && (
           <div className="col-sm-4 p-2 ">
-            <Image image={reply.image} imageID={reply.imageID} />
+            <Image image={reply.image} ID={reply.id} />
           </div>
         )}
 
@@ -55,10 +57,11 @@ const Thread = ({ thread }) => {
   );
 };
 
-const ListThreads = ({ threads }) => {
+const ListThreads = () => {
+  const appCtx = useContext(AppContext);
   return (
     <div className="container">
-      {threads.map((item) => (
+      {appCtx.thread.map((item) => (
         <Thread key={item.id} thread={item} />
       ))}
     </div>

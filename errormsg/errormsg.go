@@ -5,6 +5,7 @@ import (
 	"reflect"
 )
 
+// Error ...
 type Error struct {
 	ErrorCode    int    `json:"errorCode"`
 	ErrorMessage string `json:"errorMessage"`
@@ -12,8 +13,9 @@ type Error struct {
 	// Err          string `json:"error`
 }
 
-func (this *Error) ToBytes() []byte {
-	jsondata, _ := json.Marshal(this)
+// ToBytes ...
+func (errs *Error) ToBytes() []byte {
+	jsondata, _ := json.Marshal(errs)
 	return jsondata
 }
 
@@ -23,7 +25,8 @@ func (this *Error) ToBytes() []byte {
 // 	return jsondata
 // }
 
-func (this *Error) ToBytesWithStruct(obj interface{}) []byte {
+// ToBytesWithStruct ...
+func (errs *Error) ToBytesWithStruct(obj interface{}) []byte {
 	m := map[string]interface{}{}
 	obj1 := reflect.TypeOf(obj)
 	obj2 := reflect.ValueOf(obj)
@@ -32,7 +35,7 @@ func (this *Error) ToBytesWithStruct(obj interface{}) []byte {
 		m[obj1.Field(i).Name] = obj2.Field(i).Interface()
 	}
 
-	json.Unmarshal(this.ToBytes(), &m)
+	json.Unmarshal(errs.ToBytes(), &m)
 	for k, v := range m {
 		m[k] = v
 	}
@@ -43,9 +46,10 @@ func (this *Error) ToBytesWithStruct(obj interface{}) []byte {
 	return b
 }
 
-func (this *Error) ToBytesWithObject(v map[string]interface{}) []byte {
+// ToBytesWithObject ...
+func (errs *Error) ToBytesWithObject(v map[string]interface{}) []byte {
 	m := map[string]interface{}{}
-	json.Unmarshal(this.ToBytes(), &m)
+	json.Unmarshal(errs.ToBytes(), &m)
 	for k, v := range v {
 		m[k] = v
 	}
@@ -56,10 +60,11 @@ func (this *Error) ToBytesWithObject(v map[string]interface{}) []byte {
 	return b
 }
 
-func (this *Error) MustWithObject(v map[string]interface{}) map[string]interface{} {
+// MustWithObject ...
+func (errs *Error) MustWithObject(v map[string]interface{}) map[string]interface{} {
 	m := map[string]interface{}{}
 
-	json.Unmarshal(this.ToBytes(), &m)
+	json.Unmarshal(errs.ToBytes(), &m)
 	for k, v := range v {
 		m[k] = v
 	}
@@ -87,14 +92,8 @@ var ErrorInsertSQL = Error{
 
 // ErrorQuerySQL ...
 var ErrorQuerySQL = Error{
-	ErrorCode:    1001,
-	ErrorMessage: "Query SQL fail",
-}
-
-// ErrorEmpty ...
-var ErrorEmpty = Error{
 	ErrorCode:    1002,
-	ErrorMessage: "Key Store is empty, try again later",
+	ErrorMessage: "Query SQL fail",
 }
 
 // ErrorParsingJSON ...
@@ -103,14 +102,20 @@ var ErrorParsingJSON = Error{
 	ErrorMessage: "json格式錯誤",
 }
 
-// ErrorCheckSum ...
-var ErrorCheckSum = Error{
-	ErrorCode:    1004,
-	ErrorMessage: "CheckSum驗證錯誤",
+// ErrorParamEmpty ...
+var ErrorParamEmpty = Error{
+	ErrorCode:    2000,
+	ErrorMessage: "標題或內文不可空白",
 }
 
-// ErrorDelAccount ...
-var ErrorDelAccount = Error{
-	ErrorCode:    1005,
-	ErrorMessage: "刪除帳號失敗",
+// ErrorParamImage ...
+var ErrorParamImage = Error{
+	ErrorCode:    2001,
+	ErrorMessage: "附圖請符合勾選規則",
+}
+
+// ErrorReportEmpty ...
+var ErrorReportEmpty = Error{
+	ErrorCode:    2002,
+	ErrorMessage: "回報內容不可空白",
 }

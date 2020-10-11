@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TopLink = () => {
+export default () => {
   const classes = useStyles();
 
   return (
@@ -38,5 +38,3 @@ const TopLink = () => {
     </div>
   );
 };
-
-export default TopLink;
