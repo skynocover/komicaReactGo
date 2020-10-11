@@ -5,26 +5,65 @@ import (
 	"komicaRG/errormsg"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/valyala/fasthttp"
 )
 
 // ThreadGet get the post
 func ThreadGet(ctx *fasthttp.RequestCtx) {
+	ip := func() string {
+		clientIP := string(ctx.Request.Header.Peek("X-Forwarded-For"))
+		if index := strings.IndexByte(clientIP, ','); index >= 0 {
+			clientIP = clientIP[0:index]
+		}
+		clientIP = strings.TrimSpace(clientIP)
+		if len(clientIP) > 0 {
+			return clientIP
+		}
+		clientIP = strings.TrimSpace(string(ctx.Request.Header.Peek("X-Real-Ip")))
+		if len(clientIP) > 0 {
+			return clientIP
+		}
+		return ctx.RemoteIP().String()
+	}()
+
+	logs := database.Log{
+		IP: ip,
+	}
 
 	page, err := strconv.Atoi(string(ctx.FormValue("page")))
 	if err != nil {
 		valuefail := errormsg.ErrorParam
 		ctx.Write(valuefail.ToBytes())
+		logs.Content = valuefail.ErrorMessage
+		logs.InserSQL()
 		return
 	}
 
 	var threads struct {
 		Threads []database.Thread
+		Count   int `json:"count"`
 	}
 
+	//查詢討論串筆數
+	rows, err := database.DB.Query("SELECT COUNT(*) FROM `posts` where parent_post IS NULL")
+	if err != nil {
+		log.Println(err)
+		rowfail := errormsg.ErrorQuerySQL
+		ctx.Write(rowfail.ToBytes())
+		return
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&threads.Count); err != nil {
+			log.Println(err)
+		}
+	}
+	rows.Close()
+
 	//查詢資料
-	rows, err := database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY replytime Desc limit ?,10", (page-1)*10)
+	rows, err = database.DB.Query("SELECT `id`,`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`,`time` FROM `posts` where parent_post IS NULL ORDER BY replytime Desc limit ?,10", (page-1)*10)
 	if err != nil {
 		log.Println(err)
 		rowfail := errormsg.ErrorQuerySQL

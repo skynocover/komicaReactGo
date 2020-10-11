@@ -14,23 +14,6 @@ import (
 
 // ThreadPost get the post
 func ThreadPost(ctx *fasthttp.RequestCtx) {
-	var post post
-	if err := json.Unmarshal(ctx.PostBody(), &post); err != nil {
-		jsonfail := errormsg.ErrorParsingJSON
-		ctx.Write(jsonfail.ToBytes())
-		return
-	}
-
-	if (post.Title == "" && post.Parent == nil) || (post.WithImg && post.Image == "") || post.Content == "" {
-		log.Println("post fail")
-		jsonfail := errormsg.ErrorParam
-		ctx.Write(jsonfail.ToBytes())
-		return
-	}
-
-	if post.Name == "" {
-		post.Name = "某個懶得打名稱的人"
-	}
 
 	ip := func() string {
 		clientIP := string(ctx.Request.Header.Peek("X-Forwarded-For"))
@@ -47,6 +30,40 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 		}
 		return ctx.RemoteIP().String()
 	}()
+
+	logs := database.Log{
+		IP: ip,
+	}
+
+	var post post
+	if err := json.Unmarshal(ctx.PostBody(), &post); err != nil {
+		jsonfail := errormsg.ErrorParsingJSON
+		ctx.Write(jsonfail.ToBytes())
+		failreason := fmt.Sprintf("ip:%s post json fail, err:%s", ip, err)
+		logs.Content = failreason
+		logs.InserSQL()
+		return
+	}
+
+	if (post.Title == "" && post.Parent == nil) || post.Content == "" {
+		jsonfail := errormsg.ErrorParamEmpty
+		ctx.Write(jsonfail.ToBytes())
+		logs.Content = jsonfail.ErrorMessage
+		logs.InserSQL()
+		return
+	}
+
+	if (post.Image == "" && post.WithImg) || (post.Image != "" && !post.WithImg) {
+		jsonfail := errormsg.ErrorParamImage
+		ctx.Write(jsonfail.ToBytes())
+		logs.Content = jsonfail.ErrorMessage
+		logs.InserSQL()
+		return
+	}
+
+	if post.Name == "" {
+		post.Name = "某個懶得打名稱的人"
+	}
 
 	shaip := fmt.Sprintf("%x\n", crc32.ChecksumIEEE([]byte(ip)))
 
@@ -71,5 +88,4 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 	success := errormsg.SUCCESS
 
 	ctx.Write(success.ToBytes())
-
 }

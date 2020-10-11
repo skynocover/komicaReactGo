@@ -11,6 +11,7 @@ type post struct {
 }
 
 type report struct {
-	Reason  string `json:"reason"`
-	Content string `json:"content"`
+	Reason  string  `json:"reason"`
+	Content string  `json:"content"`
+	ID      *string `json:"reportid"`
 }
