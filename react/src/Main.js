@@ -17,7 +17,7 @@ const Main = () => {
   const appCtx = useContext(AppContext);
   useEffect(() => {
     appCtx.getthread(1);
-  }); //[0]動作[1]會觸發動作的事件
+  }, []); //[0]動作[1]會觸發動作的事件
 
   return (
     <>
