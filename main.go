@@ -25,7 +25,7 @@ func main() {
 	// log.Println(config.Config)
 
 	router := fasthttprouter.New()
-	router.NotFound = fasthttp.FSHandler("build", 0)
+	router.NotFound = fasthttp.FSHandler("./react/build", 0)
 	router.POST("/thread/post", apiagent.ThreadPost)
 	router.GET("/thread/get", apiagent.ThreadGet)
 	router.POST("/report/post", apiagent.ReportPost)
