@@ -21,7 +21,7 @@ const useStyles = makeStyles({
     height: 35,
   },
 });
-export default function Image({image,ID}) {
+export default function Image({image,id}) {
   const classes = useStyles();
   const appCtx = useContext(AppContext);
   return (
@@ -39,7 +39,7 @@ export default function Image({image,ID}) {
           <Button color="primary" href={image} target="_blank">
             Link
           </Button>
-          <IconButton size="small" onClick={appCtx.toggleReport(true,ID)}>
+          <IconButton size="small" onClick={appCtx.toggleReport(true,id)}>
             <ReportIcon />
           </IconButton>
         </CardActions>

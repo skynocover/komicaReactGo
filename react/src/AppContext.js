@@ -14,14 +14,14 @@ const AppProvider = ({ children }) => {
   // report ...
   const [reportID, setReportID] = React.useState(null);
   const [reportDraw, setReportDraw] = React.useState(false);
-  const toggleReport = (open, reportID) => (event) => {
+  const toggleReport = (open, id) => (event) => {
     if (
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
     ) {
       return;
     }
-    setReportID(reportID);
+    setReportID(id);
     setReportDraw(open);
   };
 
@@ -113,7 +113,7 @@ const AppProvider = ({ children }) => {
       .get("/thread/get?page=" + page)
       .then((res) => {
         // console.table(res.data.Threads)
-        console.log(res.data.Threads);
+        // console.log(res.data.Threads);
         setThread(res.data.Threads);
         setPageCount(Math.ceil(res.data.Count / 10));
         setPage(page);

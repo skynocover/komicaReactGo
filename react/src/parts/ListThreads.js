@@ -16,7 +16,7 @@ const Reply = ({ reply }) => {
       <div className="row p-2 justify-content-center">
         {reply.image && (
           <div className="col-sm-4 p-2 ">
-            <Image image={reply.image} ID={reply.id} />
+            <Image image={reply.image} id={reply.id} />
           </div>
         )}
 
@@ -37,7 +37,7 @@ const Thread = ({ thread }) => {
       <div className="row p-2 justify-content-center ">
         {thread.image && (
           <div className="col-sm-4 p-2 ">
-            <Image image={thread.image} imageID={thread.imageID} />
+            <Image image={thread.image} id={thread.id} />
           </div>
         )}
 
