@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./mainstyle.css";
 import axios from "axios";
-
+import Drawer from "@material-ui/core/Drawer";
+import Reportform from "./components/reportform.js";
+import { makeStyles } from "@material-ui/core/styles";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
@@ -55,11 +59,40 @@ const AppProvider = ({ children }) => {
       })
       .then((res) => {
         console.table(res.data);
-        if (res.data.errorCode == 0) {
+        if (res.data.errorCode === 0) {
           setSuccess(true);
           setSuccessLabel("回報成功");
         } else {
         }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        /* 不論失敗成功皆會執行 */
+      });
+  };
+
+  const Post = (title, image, content, name, withImage, sage, parent) => {
+    axios
+      .post("/thread/post", {
+        title,
+        image,
+        content,
+        name,
+        withImage,
+        sage,
+        parent,
+      })
+      .then((res) => {
+        console.table(res.data);
+        setSuccess(true);
+        if (parent) {
+          setSuccessLabel("回覆成功");
+        } else {
+          setSuccessLabel("發文成功");
+        }
+        getthread(1);
       })
       .catch((error) => {
         console.error(error);
@@ -78,13 +111,23 @@ const AppProvider = ({ children }) => {
     setSuccess(false);
   };
 
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      width: "100%",
+      "& > * + *": {
+        marginTop: theme.spacing(2),
+      },
+    },
+  }));
+  const classes = useStyles();
+  const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  };
+
   return (
     <AppContext.Provider
       value={{
-        success,
-        SuccessClose,
         getthread,
-        reportDraw,
         thread,
         pageCount,
         toggleReport,
@@ -92,10 +135,22 @@ const AppProvider = ({ children }) => {
         toggleReply,
         setReplyDraw,
         Report,
-        successLabel,
+        Post,
       }}
     >
       {children}
+      <Drawer anchor="bottom" open={reportDraw} onClose={toggleReport(false)}>
+        <div className="m-3">
+          <Reportform />
+        </div>
+      </Drawer>
+      <div className={classes.root}>
+        <Snackbar open={success} autoHideDuration={1000} onClose={SuccessClose}>
+          <Alert onClose={SuccessClose} severity="success">
+            {successLabel}
+          </Alert>
+        </Snackbar>
+      </div>
     </AppContext.Provider>
   );
 };

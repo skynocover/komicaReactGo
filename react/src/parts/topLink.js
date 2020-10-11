@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
 
 const TopLink = () => {
   const classes = useStyles();
-  const [state, setState] = React.useState(false);
 
   return (
     <div className="d-flex justify-content-end">

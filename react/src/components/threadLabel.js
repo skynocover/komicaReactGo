@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
 import "../mainstyle.css";
 
-import Postform from "../parts/postform.js";
-import Reportform from "./reportform.js";
-
 import IconButton from "@material-ui/core/IconButton";
 import ReportIcon from "@material-ui/icons/Report";
 import ReplyRoundedIcon from "@material-ui/icons/ReplyRounded";
 import Drawer from "@material-ui/core/Drawer";
+
+import Postform from "../parts/postform.js";
 import { AppContext } from "../AppContext";
 
 const ReplyBtm = ({ parent }) => {

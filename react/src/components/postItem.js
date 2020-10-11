@@ -6,29 +6,6 @@ import Checkbox from "@material-ui/core/Checkbox";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { AppContext } from "../AppContext";
-import axios from "axios";
-
-const Post = (title, image, content, name, withImage, sage, parent) => {
-  axios
-    .post("/thread/post", {
-      title,
-      image,
-      content,
-      name,
-      withImage,
-      sage,
-      parent,
-    })
-    .then((res) => {
-      console.table(res.data);
-    })
-    .catch((error) => {
-      console.error(error);
-    })
-    .finally(() => {
-      /* 不論失敗成功皆會執行 */
-    });
-};
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -93,7 +70,7 @@ const PostItem = ({
         size="small"
         onClick={() => {
           appCtx.getthread(1);
-          Post(title, image, content, name, withImage, sage, parent);
+          appCtx.Post(title, image, content, name, withImage, sage, parent);
           drawOpen != null && drawOpen(false);
           initPost != null && initPost();
         }}
