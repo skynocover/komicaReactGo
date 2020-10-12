@@ -5,6 +5,7 @@ import Fab from "@material-ui/core/Fab";
 import Checkbox from "@material-ui/core/Checkbox";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+
 import { AppContext } from "../AppContext";
 
 const useStyles = makeStyles((theme) => ({
@@ -16,14 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PostItem = ({
-  title,
-  name,
-  content,
-  image,
-  parent,
-  initPost,
-}) => {
+const PostItem = ({ title, name, content, image, parent, initPost }) => {
   const appCtx = useContext(AppContext);
   const classes = useStyles();
   const [withImage, setWithImage] = React.useState(true);
@@ -68,7 +62,7 @@ const PostItem = ({
         size="small"
         onClick={() => {
           appCtx.Post(title, image, content, name, withImage, sage, parent);
-          appCtx.setReplyDraw(false)
+          appCtx.setDrawOpen(false);
           initPost != null && initPost();
         }}
       >

@@ -4,7 +4,9 @@ import "../mainstyle.css";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { makeStyles } from "@material-ui/core/styles";
+
 import { AppContext } from "../AppContext";
+import Reportform from "../components/reportform.js";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,7 +30,9 @@ export default () => {
           color="primary"
           aria-label="text primary button group"
         >
-          <Button onClick={appCtx.toggleReport(true)}>錯誤回報</Button>
+          <Button onClick={appCtx.toggle(true, <Reportform />)}>
+            錯誤回報
+          </Button>
           <Button href="https://github.com/skynocover" target="_blank">
             Github
           </Button>

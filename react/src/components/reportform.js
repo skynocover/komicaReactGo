@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import "../mainstyle.css";
 
 import TextField from "@material-ui/core/TextField";
-
 import Fab from "@material-ui/core/Fab";
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -10,9 +9,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+
 import { AppContext } from "../AppContext";
 
-const ReportForm = () => {
+const ReportForm = ({ id }) => {
   const [reason, setReason] = React.useState("bug");
   const [content, setContent] = React.useState("");
   const appCtx = useContext(AppContext);
@@ -60,8 +60,8 @@ const ReportForm = () => {
           aria-label="add"
           size="small"
           onClick={() => {
-            appCtx.Report(reason, content);
-            appCtx.setReportDraw(false);
+            appCtx.Report(id, reason, content);
+            appCtx.setDrawOpen(false);
           }}
         >
           <NavigationIcon />
