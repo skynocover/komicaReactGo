@@ -2,35 +2,47 @@ import React, { useState } from "react";
 import "./mainstyle.css";
 import axios from "axios";
 import Drawer from "@material-ui/core/Drawer";
-import Reportform from "./components/reportform.js";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+
 import Postform from "./parts/postform.js";
 
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
-  // report ...
-  const [reportID, setReportID] = React.useState(null);
-  const [reportDraw, setReportDraw] = React.useState(false);
-  const toggleReport = (open, id) => (event) => {
+  // draw ...
+  const [drawOpen, setDrawOpen] = React.useState(false);
+  const [Form, setForm] = React.useState(<Postform />);
+  const toggle = (open, form) => (event) => {
     if (
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
     ) {
       return;
     }
-    setReportID(id);
-    setReportDraw(open);
+    setDrawOpen(open);
+    form && setForm(form);
   };
 
-  const Report = (reason, content) => {
+  // success drawer
+  const [success, setSuccess] = React.useState(false);
+  const [successLabel, setSuccessLabel] = React.useState("success");
+  const [severity, setSeverity] = React.useState("success");
+  const SuccessClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSuccess(false);
+  };
+
+  // api ...
+  const Report = (reportid, reason, content) => {
     axios
       .post("/report/post", {
         reason,
         content,
-        reportid: reportID,
+        reportid,
       })
       .then((res) => {
         console.table(res.data);
@@ -49,22 +61,6 @@ const AppProvider = ({ children }) => {
       .finally(() => {});
   };
 
-  // reply ...
-  const [replyParent, setReplyParent] = React.useState(null);
-  const [replyDraw, setReplyDraw] = React.useState(false);
-  const toggleReply = (open, parent) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setReplyDraw(open);
-    if (open) {
-      setReplyParent(parent);
-    }
-  };
-
   const Post = (title, image, content, name, withImage, sage, parent) => {
     axios
       .post("/thread/post", {
@@ -80,13 +76,12 @@ const AppProvider = ({ children }) => {
         console.table(res.data);
         if (res.data.errorCode === 0) {
           if (parent) {
-            setSeverity("success");
             setSuccessLabel("回覆成功");
-            setSuccess(true);
           } else {
             setSuccessLabel("發文成功");
-            setSuccess(true);
           }
+          setSeverity("success");
+          setSuccess(true);
           if (!sage) {
             getthread(1);
           } else {
@@ -112,11 +107,17 @@ const AppProvider = ({ children }) => {
     axios
       .get("/thread/get?page=" + page)
       .then((res) => {
-        // console.table(res.data.Threads)
-        // console.log(res.data.Threads);
-        setThread(res.data.Threads);
-        setPageCount(Math.ceil(res.data.Count / 10));
-        setPage(page);
+        if (res.data.errorCode === 0) {
+          // console.table(res.data.Threads)
+          // console.log(res.data.Threads);
+          setThread(res.data.Threads);
+          setPageCount(Math.ceil(res.data.Count / 10));
+          setPage(page);
+        } else {
+          setSeverity("error");
+          setSuccessLabel(res.data.errorMessage);
+          setSuccess(true);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -126,15 +127,25 @@ const AppProvider = ({ children }) => {
       });
   };
 
-  // success drawer
-  const [success, setSuccess] = React.useState(false);
-  const [successLabel, setSuccessLabel] = React.useState("success");
-  const [severity, setSeverity] = React.useState("success");
-  const SuccessClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSuccess(false);
+  // take thread
+  const takethread = async (id) => {
+    axios
+      .get("/thread/take?id=" + id)
+      .then((res) => {
+        if (res.data.errorCode === 0) {
+          setThread(res.data.Threads);
+        } else {
+          setSeverity("error");
+          setSuccessLabel(res.data.errorMessage);
+          setSuccess(true);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        /* 不論失敗成功皆會執行 */
+      });
   };
 
   const useStyles = makeStyles((theme) => ({
@@ -146,44 +157,40 @@ const AppProvider = ({ children }) => {
     },
   }));
   const classes = useStyles();
-  const Alert = (props) => {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  };
 
   return (
     <AppContext.Provider
       value={{
-        getthread,
         thread,
-        pageCount,
-        toggleReport,
-        setReportDraw,
-        toggleReply,
-        setReplyParent,
-        setReplyDraw,
+        getthread,
+        takethread,
+
         Report,
         Post,
+        toggle,
+        setDrawOpen,
+
+        pageCount,
         page,
       }}
     >
       {children}
-      <Drawer anchor="bottom" open={reportDraw} onClose={toggleReport(false)}>
-        <div className="m-3">
-          <Reportform />
-        </div>
-      </Drawer>
+
       <div className={classes.root}>
         <Snackbar open={success} autoHideDuration={1200} onClose={SuccessClose}>
-          <Alert onClose={SuccessClose} severity={severity}>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={SuccessClose}
+            severity={severity}
+          >
             {successLabel}
-          </Alert>
+          </MuiAlert>
         </Snackbar>
       </div>
 
-      <Drawer anchor="bottom" open={replyDraw} onClose={toggleReply(false)}>
-        <div className="m-3">
-          <Postform parent={replyParent} />
-        </div>
+      <Drawer anchor="bottom" open={drawOpen} onClose={toggle(false)}>
+        <div className="m-3">{Form}</div>
       </Drawer>
     </AppContext.Provider>
   );
