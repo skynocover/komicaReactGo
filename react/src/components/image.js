@@ -9,7 +9,10 @@ import CardActions from "@material-ui/core/CardActions";
 import CardMedia from "@material-ui/core/CardMedia";
 import IconButton from "@material-ui/core/IconButton";
 import ReportIcon from "@material-ui/icons/Report";
+
 import { AppContext } from "../AppContext";
+import Reportform from "./reportform.js";
+
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
@@ -21,7 +24,7 @@ const useStyles = makeStyles({
     height: 35,
   },
 });
-export default function Image({image,id}) {
+export default function Image({ image, id }) {
   const classes = useStyles();
   const appCtx = useContext(AppContext);
   return (
@@ -39,7 +42,10 @@ export default function Image({image,id}) {
           <Button color="primary" href={image} target="_blank">
             Link
           </Button>
-          <IconButton size="small" onClick={appCtx.toggleReport(true,id)}>
+          <IconButton
+            size="small"
+            onClick={appCtx.toggle(true, <Reportform id={id} />)}
+          >
             <ReportIcon />
           </IconButton>
         </CardActions>
