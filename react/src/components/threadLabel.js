@@ -4,6 +4,7 @@ import "../mainstyle.css";
 import IconButton from "@material-ui/core/IconButton";
 import ReportIcon from "@material-ui/icons/Report";
 import ReplyRoundedIcon from "@material-ui/icons/ReplyRounded";
+import Link from "@material-ui/core/Link";
 
 import { AppContext } from "../AppContext";
 import Postform from "../parts/postform.js";
@@ -19,7 +20,20 @@ export default function ThreadLabel({ post }) {
       <span className="text-secondary">
         [{post.time} ID:{post.poster_id}]
       </span>
-      <span className="text-info">No:{post.id}</span>
+      <span className="text-info">
+        {post.title ? (
+          <Link
+            href="#"
+            onClick={() => {
+              appCtx.takethread(post.id);
+            }}
+          >
+            No:{post.id}
+          </Link>
+        ) : (
+          post.id
+        )}
+      </span>
       <IconButton
         size="small"
         onClick={appCtx.toggle(true, <Reportform id={post.id} />)}
