@@ -7,10 +7,9 @@ import { AppContext } from "./AppContext";
 
 import TopLink from "./parts/topLink.js";
 import Header from "./parts/header";
-import Postform from "./parts/postform.js";
-import WarningSign from "./parts/warningSign.js";
+import Poster from "./parts/poster";
 import Pagenation from "./parts/pagination.js";
-import ListThreads from "./parts/ListThreads.js";
+import ListThreads from "./parts/listThreads.js";
 import BottomLink from "./parts/bottomLink.js";
 
 const Main = () => {
@@ -23,8 +22,7 @@ const Main = () => {
     <>
       <TopLink />
       <Header />
-      <Postform />
-      <WarningSign />
+      <Poster />
       <Pagenation />
       <Divider />
       <ListThreads />

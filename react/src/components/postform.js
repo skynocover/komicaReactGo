@@ -2,7 +2,7 @@ import React from "react";
 import "../mainstyle.css";
 
 import TextField from "@material-ui/core/TextField";
-import PostItem from "../components/postItem.js";
+import PostItem from "./postItem.js";
 
 const Postform = ({ parent }) => {
   const [title, setTitle] = React.useState("");

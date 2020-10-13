@@ -36,6 +36,14 @@ export default () => {
           <Button href="https://github.com/skynocover" target="_blank">
             Github
           </Button>
+          <Button
+            onClick={() => {
+              window.location.href = `/#/?page=1`;
+              appCtx.getthread();
+            }}
+          >
+            回首頁
+          </Button>
         </ButtonGroup>
       </div>
     </div>

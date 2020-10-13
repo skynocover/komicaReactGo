@@ -7,7 +7,7 @@ import ReplyRoundedIcon from "@material-ui/icons/ReplyRounded";
 import Link from "@material-ui/core/Link";
 
 import { AppContext } from "../AppContext";
-import Postform from "../parts/postform.js";
+import Postform from "./postform.js";
 import Reportform from "./reportform.js";
 
 export default function ThreadLabel({ post }) {

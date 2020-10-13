@@ -6,11 +6,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
-import Postform from "./parts/postform.js";
+import Postform from "./components/postform.js";
 
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
+  const [SingleThread, setSingleThread] = React.useState(false);
+
   // draw ...
   const [drawOpen, setDrawOpen] = React.useState(false);
   const [Form, setForm] = React.useState(<Postform />);
@@ -105,10 +107,12 @@ const AppProvider = ({ children }) => {
   const [page, setPage] = useState(1);
   const getthread = async () => {
     let url = window.location.hash;
-    if (url == "") {
-      url = "/#?page=1";
+    if (!url.startsWith("#/?page")) {
+      setSingleThread(true);
+    } else {
+      setPage(Number(url.slice(8)));
+      setSingleThread(false);
     }
-    // console.log("/thread/get" + url.slice(2))
     axios
       .get("/thread/get" + url.slice(2))
       .then((res) => {
@@ -117,30 +121,7 @@ const AppProvider = ({ children }) => {
           // console.log(res.data.Threads);
           setThread(res.data.Threads);
           setPageCount(Math.ceil(res.data.Count / 10));
-          setPage(page);
-        } else {
-          setSeverity("error");
-          setSuccessLabel(res.data.errorMessage);
-          setSuccess(true);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        /* 不論失敗成功皆會執行 */
-      });
-  };
-
-  // take thread
-  const takethread = async (id) => {
-    const url = window.location.hash;
-    console.log("/thread/take" + url.slice(2));
-    axios
-      .get("/thread/take" + url.slice(2))
-      .then((res) => {
-        if (res.data.errorCode === 0) {
-          setThread(res.data.Threads);
+          // setPage(page);
         } else {
           setSeverity("error");
           setSuccessLabel(res.data.errorMessage);
@@ -170,15 +151,16 @@ const AppProvider = ({ children }) => {
       value={{
         thread,
         getthread,
-        takethread,
 
         Report,
         Post,
         toggle,
         setDrawOpen,
 
+        SingleThread,
         pageCount,
         page,
+        setPage,
       }}
     >
       {children}
