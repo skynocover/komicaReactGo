@@ -103,12 +103,17 @@ const AppProvider = ({ children }) => {
   const [thread, setThread] = useState([]);
   const [pageCount, setPageCount] = useState(1);
   const [page, setPage] = useState(1);
-  const getthread = async (page) => {
+  const getthread = async () => {
+    let url = window.location.hash;
+    if (url == "") {
+      url = "/#?page=1";
+    }
+    // console.log("/thread/get" + url.slice(2))
     axios
-      .get("/thread/get?page=" + page)
+      .get("/thread/get" + url.slice(2))
       .then((res) => {
         if (res.data.errorCode === 0) {
-          // console.table(res.data.Threads)
+          // console.table(res.data)
           // console.log(res.data.Threads);
           setThread(res.data.Threads);
           setPageCount(Math.ceil(res.data.Count / 10));
@@ -129,8 +134,10 @@ const AppProvider = ({ children }) => {
 
   // take thread
   const takethread = async (id) => {
+    const url = window.location.hash;
+    console.log("/thread/take" + url.slice(2));
     axios
-      .get("/thread/take?id=" + id)
+      .get("/thread/take" + url.slice(2))
       .then((res) => {
         if (res.data.errorCode === 0) {
           setThread(res.data.Threads);

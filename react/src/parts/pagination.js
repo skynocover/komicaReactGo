@@ -8,7 +8,8 @@ const Pages = () => {
   const appCtx = useContext(AppContext);
 
   const handlePage = async (event, value) => {
-    await appCtx.getthread(value);
+    window.location.href = `/#/?page=${value}`;
+    appCtx.getthread();
   };
 
   return (
@@ -17,7 +18,7 @@ const Pages = () => {
         count={appCtx.pageCount}
         shape="rounded"
         color="primary"
-        page={appCtx.page}
+        // page={appCtx.page}
         onChange={handlePage}
       />
     </div>

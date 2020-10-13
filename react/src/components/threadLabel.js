@@ -23,15 +23,16 @@ export default function ThreadLabel({ post }) {
       <span className="text-info">
         {post.title ? (
           <Link
-            href="#"
+            //href={`/#/thread/take?id=${post.id}`}
             onClick={() => {
-              appCtx.takethread(post.id);
+              window.location.href = `/#/?id=${post.id}`;
+              appCtx.getthread();
             }}
           >
-            No:{post.id}
+            {`NO: ${post.id}`}
           </Link>
         ) : (
-          post.id
+          `NO: ${post.id}`
         )}
       </span>
       <IconButton
