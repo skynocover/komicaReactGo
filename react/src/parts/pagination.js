@@ -8,7 +8,6 @@ const Pages = () => {
   const appCtx = useContext(AppContext);
 
   const handlePage = async (event, value) => {
-    // appCtx.setPage(value);
     window.location.href = `/#/?page=${value}`;
     appCtx.getthread();
   };

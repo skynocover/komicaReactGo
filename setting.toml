@@ -6,4 +6,4 @@
     port = "3306"
     name ="komicarg"
     user= "root"
-    password="example"
+    password="123456"
