@@ -5,8 +5,14 @@ import Fab from "@material-ui/core/Fab";
 import Checkbox from "@material-ui/core/Checkbox";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-
+import { useField } from "formik";
 import { AppContext } from "../AppContext";
+
+const MuiCheckbox = ({ ...props }) => {
+  const [field] = useField(props.name);
+
+  return <Checkbox {...field} color={props.color} checked={field.value} />;
+};
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -17,20 +23,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PostItem = ({ title, name, content, image, parent, initPost }) => {
+const PostItem = ({
+  onClick,
+  withImage,
+  sage,
+  setWithImage,
+  setSage,
+  parent,
+  initPost,
+}) => {
   const appCtx = useContext(AppContext);
   const classes = useStyles();
-  const [withImage, setWithImage] = React.useState(true);
-  const [sage, setSage] = React.useState(false);
 
   return (
     <div className="d-flex">
       <FormControlLabel
         control={
-          <Checkbox
+          <MuiCheckbox
             checked={withImage}
             onChange={() => {
-              setWithImage(!withImage);
+              setWithImage("withImage");
             }}
             name="withImage"
             color="primary"
@@ -41,7 +53,7 @@ const PostItem = ({ title, name, content, image, parent, initPost }) => {
       {parent && (
         <FormControlLabel
           control={
-            <Checkbox
+            <MuiCheckbox
               checked={sage}
               onChange={() => {
                 setSage(!sage);
@@ -61,9 +73,7 @@ const PostItem = ({ title, name, content, image, parent, initPost }) => {
         className={classes.margin}
         size="small"
         onClick={() => {
-          appCtx.Post(title, image, content, name, withImage, sage, parent);
-          appCtx.setDrawOpen(false);
-          initPost != null && initPost();
+          onClick();
         }}
       >
         <NavigationIcon className={classes.extendedIcon} />
