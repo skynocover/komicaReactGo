@@ -70,7 +70,7 @@ const Postform = ({ parent }) => {
             <div className="col-lg-5 col-sm-8 col-md-6 col-12 d-flex flex-column bd-highlight ">
               {!parent && (
                 <TextField
-                  error={errors.title}
+                  error={errors.title&&true}
                   helperText={errors.title}
                   name="title"
                   label="標題"
@@ -88,7 +88,7 @@ const Postform = ({ parent }) => {
                 onChange={handleChange}
               />
               <TextField
-                error={errors.content}
+                error={errors.content&&true}
                 helperText={errors.content}
                 name="content"
                 onChange={handleChange}
@@ -100,7 +100,7 @@ const Postform = ({ parent }) => {
                 placeholder="可使用markdown語法"
               />
               <TextField
-                error={errors.image}
+                error={errors.image&&true}
                 helperText={errors.image}
                 name="image"
                 label="附加圖檔網址"

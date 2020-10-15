@@ -36,7 +36,7 @@ export default () => {
           Underlords
         </Button>
       </div>
-      <Divider />
+      <Divider/>
     </div>
   );
 };

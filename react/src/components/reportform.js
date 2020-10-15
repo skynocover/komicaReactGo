@@ -9,12 +9,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { Formik } from "formik";
 
 import { AppContext } from "../AppContext";
 
 const ReportForm = ({ id }) => {
-  const [reason, setReason] = React.useState("bug");
-  const [content, setContent] = React.useState("");
   const appCtx = useContext(AppContext);
 
   const useStyles = makeStyles((theme) => ({
@@ -26,6 +25,26 @@ const ReportForm = ({ id }) => {
 
   const classes = useStyles();
   return (
+    <Formik
+      initialValues={{
+        reason: "bug",
+        content: "",
+      }}
+      validateOnChange={false}
+      validate={(values) => {
+        const errors = {};
+        if (!values.content) {
+          errors.content = "回報內容必填";
+        }
+        return errors;
+      }}
+      onSubmit={(values, action) => {
+        appCtx.Report(id, values.reason, values.content);
+        appCtx.setDrawOpen(false);
+        action.resetForm();
+      }}
+    >
+      {({ handleSubmit, values, errors, handleChange }) => (
     <div className="row justify-content-center">
       <div className="col-lg-5 col-sm-8 col-md-6 col-12 d-flex flex-column bd-highlight ">
         <FormControl variant="filled" className={classes.formControl}>
@@ -33,10 +52,9 @@ const ReportForm = ({ id }) => {
           <Select
             labelId="demo-simple-select-filled-label"
             id="demo-simple-select-filled"
-            value={reason}
-            onChange={(event) => {
-              setReason(event.target.value);
-            }}
+            name="reason"
+            value={values.reason}
+            onChange={handleChange}
           >
             <MenuItem value={"bug"}>Bug</MenuItem>
             <MenuItem value={"del"}>刪文請求</MenuItem>
@@ -46,29 +64,28 @@ const ReportForm = ({ id }) => {
         <TextField
           id="filled-basic"
           multiline
+          error={errors.content&&true}
+          helperText={errors.content}
           rows={4}
           label="回報內容"
           variant="filled"
           placeholder="可使用markdown語法"
-          onChange={(event) => {
-            setContent(event.target.value);
-          }}
+          name="content"
+          onChange={handleChange}
         />
         <Fab
           variant="extended"
           color="primary"
           aria-label="add"
           size="small"
-          onClick={() => {
-            appCtx.Report(id, reason, content);
-            appCtx.setDrawOpen(false);
-          }}
+          onClick={handleSubmit}
         >
           <NavigationIcon />
           回報
         </Fab>
       </div>
-    </div>
+    </div>)}
+    </Formik>
   );
 };
 
