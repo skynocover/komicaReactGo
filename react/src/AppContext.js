@@ -68,8 +68,8 @@ const AppProvider = ({ children }) => {
     ) {
       return;
     }
+    open && setForm(form);
     setDrawOpen(open);
-    form && setForm(form);
   };
 
   // success drawer
@@ -92,7 +92,7 @@ const AppProvider = ({ children }) => {
         reportid,
       })
       .then((res) => {
-        console.table(res.data);
+        // console.table(res.data);
         if (res.data.errorCode === 0) {
           setSuccess(true);
           setSuccessLabel("回報成功");
@@ -121,7 +121,7 @@ const AppProvider = ({ children }) => {
     axios
       .post("/thread/post",enc)
       .then((res) => {
-        console.table(res.data);
+        // console.table(res.data);
         if (res.data.errorCode === 0) {
           if (parent) {
             setSuccessLabel("回覆成功");
@@ -130,11 +130,7 @@ const AppProvider = ({ children }) => {
           }
           setSeverity("success");
           setSuccess(true);
-          if (!sage) {
-            getthread(1);
-          } else {
-            getthread(page);
-          }
+          getthread();
         } else {
           setSeverity("error");
           setSuccessLabel(res.data.errorMessage);
@@ -152,11 +148,7 @@ const AppProvider = ({ children }) => {
   const [pageCount, setPageCount] = useState(1);
   const [page, setPage] = useState(1);
   const getthread = async () => {
-    // let input = { hello: "hello" };
-    // let enc = EncryptJson(input);
-    // let dec = DecryptJson(enc);
-    // console.log("dec: ", dec);
-
+   
     let url = window.location.hash;
     if (url === "") {
       url = "#/?page=1";
@@ -188,9 +180,7 @@ const AppProvider = ({ children }) => {
       .catch((error) => {
         console.error(error);
       })
-      .finally(() => {
-        /* 不論失敗成功皆會執行 */
-      });
+      .finally(() => {});
   };
 
   const useStyles = makeStyles((theme) => ({
