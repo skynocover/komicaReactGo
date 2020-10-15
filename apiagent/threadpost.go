@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"hash/crc32"
+	"komicaRG/aes"
 	"komicaRG/database"
 	"komicaRG/errormsg"
 	"log"
@@ -11,6 +12,8 @@ import (
 
 	"github.com/valyala/fasthttp"
 )
+
+var key = []byte("0123456789abcdef0123456789abcdef")
 
 // ThreadPost get the post
 func ThreadPost(ctx *fasthttp.RequestCtx) {
@@ -35,8 +38,14 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 		IP: ip,
 	}
 
+	dec, err := aes.Decrypt(ctx.PostBody(), key)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	var post post
-	if err := json.Unmarshal(ctx.PostBody(), &post); err != nil {
+	if err := json.Unmarshal(dec, &post); err != nil {
 		jsonfail := errormsg.ErrorParsingJSON
 		ctx.Write(jsonfail.ToBytes())
 		failreason := fmt.Sprintf("ip:%s post json fail, err:%s", ip, err)
@@ -44,7 +53,6 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 		logs.InserSQL()
 		return
 	}
-
 	if (post.Title == "" && post.Parent == nil) || post.Content == "" {
 		jsonfail := errormsg.ErrorParamEmpty
 		ctx.Write(jsonfail.ToBytes())
@@ -67,7 +75,7 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 
 	shaip := fmt.Sprintf("%x\n", crc32.ChecksumIEEE([]byte(ip)))
 
-	_, err := database.DB.Exec("INSERT INTO `posts` (`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`, `parent_post`, `sage`,`ip`) VALUES(?,?,?,?,?,?,?,?,?)", shaip, post.Title, post.Name, post.Content, post.Image, post.WithImg, post.Parent, post.Sage, ip)
+	_, err = database.DB.Exec("INSERT INTO `posts` (`poster_id`, `title`, `name`, `content`, `imageurl`, `withimg`, `parent_post`, `sage`,`ip`) VALUES(?,?,?,?,?,?,?,?,?)", shaip, post.Title, post.Name, post.Content, post.Image, post.WithImg, post.Parent, post.Sage, ip)
 	if err != nil {
 		log.Println("insert the sql fail, err: ", err)
 		sqlfail := errormsg.ErrorInsertSQL

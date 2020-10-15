@@ -11,97 +11,7 @@ import Postform from "./components/postform.js";
 
 const AppContext = React.createContext();
 
-const AppProvider = ({ children }) => {
-  const [SingleThread, setSingleThread] = React.useState(false);
-
-  // draw ...
-  const [drawOpen, setDrawOpen] = React.useState(false);
-  const [Form, setForm] = React.useState(<Postform />);
-  const toggle = (open, form) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setDrawOpen(open);
-    form && setForm(form);
-  };
-
-  // success drawer
-  const [success, setSuccess] = React.useState(false);
-  const [successLabel, setSuccessLabel] = React.useState("success");
-  const [severity, setSeverity] = React.useState("success");
-  const SuccessClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSuccess(false);
-  };
-
-  // api ...
-  const Report = (reportid, reason, content) => {
-    axios
-      .post("/report/post", {
-        reason,
-        content,
-        reportid,
-      })
-      .then((res) => {
-        console.table(res.data);
-        if (res.data.errorCode === 0) {
-          setSuccess(true);
-          setSuccessLabel("回報成功");
-        } else {
-          setSeverity("error");
-          setSuccessLabel(res.data.errorMessage);
-          setSuccess(true);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {});
-  };
-
-  const Post = (title, image, content, name, withImage, sage, parent) => {
-    axios
-      .post("/thread/post", {
-        title,
-        image,
-        content,
-        name,
-        withImage,
-        sage,
-        parent,
-      })
-      .then((res) => {
-        console.table(res.data);
-        if (res.data.errorCode === 0) {
-          if (parent) {
-            setSuccessLabel("回覆成功");
-          } else {
-            setSuccessLabel("發文成功");
-          }
-          setSeverity("success");
-          setSuccess(true);
-          if (!sage) {
-            getthread(1);
-          } else {
-            getthread(page);
-          }
-        } else {
-          setSeverity("error");
-          setSuccessLabel(res.data.errorMessage);
-          setSuccess(true);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {});
-  };
-  const _secret = "0123456789abcdef";
+const _secret = "0123456789abcdef0123456789abcdef";
   const EncryptJson = (data) => {
     const key = CryptoJS.enc.Utf8.parse(_secret);
     const iv = GetRandomString(16);
@@ -143,6 +53,98 @@ const AppProvider = ({ children }) => {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+  }
+
+const AppProvider = ({ children }) => {
+  const [SingleThread, setSingleThread] = React.useState(false);
+
+  // draw ...
+  const [drawOpen, setDrawOpen] = React.useState(false);
+  const [Form, setForm] = React.useState(<Postform />);
+  const toggle = (open, form) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setDrawOpen(open);
+    form && setForm(form);
+  };
+
+  // success drawer
+  const [success, setSuccess] = React.useState(false);
+  const [successLabel, setSuccessLabel] = React.useState("success");
+  const [severity, setSeverity] = React.useState("success");
+  const SuccessClose = (_event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSuccess(false);
+  };
+
+  // api ...
+  const Report = (reportid, reason, content) => {
+    axios
+      .post("/report/post", {
+        reason,
+        content,
+        reportid,
+      })
+      .then((res) => {
+        console.table(res.data);
+        if (res.data.errorCode === 0) {
+          setSuccess(true);
+          setSuccessLabel("回報成功");
+        } else {
+          setSeverity("error");
+          setSuccessLabel(res.data.errorMessage);
+          setSuccess(true);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {});
+  };
+
+  const Post = (title, image, content, name, withImage, sage, parent) => {
+    let enc = EncryptJson({
+      title,
+      image,
+      content,
+      name,
+      withImage,
+      sage,
+      parent,
+    })
+    axios
+      .post("/thread/post",enc)
+      .then((res) => {
+        console.table(res.data);
+        if (res.data.errorCode === 0) {
+          if (parent) {
+            setSuccessLabel("回覆成功");
+          } else {
+            setSuccessLabel("發文成功");
+          }
+          setSeverity("success");
+          setSuccess(true);
+          if (!sage) {
+            getthread(1);
+          } else {
+            getthread(page);
+          }
+        } else {
+          setSeverity("error");
+          setSuccessLabel(res.data.errorMessage);
+          setSuccess(true);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {});
   };
 
   // get thread and page account ...
@@ -173,7 +175,7 @@ const AppProvider = ({ children }) => {
       .get("/thread/get" + url.slice(2))
       .then((res) => {
         if (res.data.errorCode === 0) {
-          console.table(res.data);
+          // console.table(res.data);
           // console.log(res.data.Threads);
           setThread(res.data.Threads);
           setPageCount(Math.ceil(res.data.Count / 10));
