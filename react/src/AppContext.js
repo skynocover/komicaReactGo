@@ -150,21 +150,24 @@ const AppProvider = ({ children }) => {
   const [pageCount, setPageCount] = useState(1);
   const [page, setPage] = useState(1);
   const getthread = async () => {
-    let input = { hello: "hello" };
-    let enc = EncryptJson(input);
-    let dec = DecryptJson(enc);
-    console.log("dec: ", dec);
+    // let input = { hello: "hello" };
+    // let enc = EncryptJson(input);
+    // let dec = DecryptJson(enc);
+    // console.log("dec: ", dec);
 
     let url = window.location.hash;
-    if (url == "") {
+    if (url === "") {
       url = "#/?page=1";
     }
     let pages = url.match(/page=[0-9]+/);
+    let id = url.match(/id=[0-9]+/)
     if (pages) {
       setPage(Number(pages[0].slice(5)));
       setSingleThread(false);
-    } else {
+    } else if(id){
       setSingleThread(true);
+    }else{
+      return
     }
     axios
       .get("/thread/get" + url.slice(2))
