@@ -1,12 +1,29 @@
-import React, { useContext } from "react";
-import "../mainstyle.css";
+import React, { useContext } from 'react';
+import '../mainstyle.css';
 
-import Image from "../components/image.js";
-import ThreadLabel from "../components/threadLabel.js";
-import Divider from "@material-ui/core/Divider";
-import { AppContext } from "../AppContext";
+import Divider from '@material-ui/core/Divider';
+import { makeStyles } from '@material-ui/core/styles';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-const ReactMarkdown = require("react-markdown");
+import Image from '../components/image.js';
+import ThreadLabel from '../components/threadLabel.js';
+import { AppContext } from '../AppContext';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
+}));
+
+const ReactMarkdown = require('react-markdown');
 const Reply = ({ reply }) => {
   return (
     <>
@@ -19,7 +36,6 @@ const Reply = ({ reply }) => {
             <Image image={reply.image} id={reply.id} />
           </div>
         )}
-
         <div className="col-sm-5 col-no-gutters p-2 ">
           <ReactMarkdown source={reply.content} />
         </div>
@@ -29,6 +45,8 @@ const Reply = ({ reply }) => {
 };
 
 const Thread = ({ thread }) => {
+  const classes = useStyles();
+  const folder = 3;
   return (
     <>
       <div className="row pt-2 justify-content-center">
@@ -45,12 +63,41 @@ const Thread = ({ thread }) => {
           <ReactMarkdown source={thread.content} />
         </div>
       </div>
-      <div className="row justify-content-center">
-        <div className="container">
-          {thread.reply != null &&
-            thread.reply.map((item) => <Reply key={item.id} reply={item} />)}
+      {thread.reply != null && (
+        <div className="row justify-content-center">
+          <div className="container">
+            {thread.reply.map(
+              (item, index) =>
+                index < folder && <Reply key={item.id} reply={item} />,
+            )}
+            {/* {thread.reply.filter((index) => {
+              return index < folder;
+            })} */}
+            {thread.reply.length > folder && (
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography className={classes.heading}>
+                    被隱藏的回應
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div className="container">
+                    {thread.reply.map((item, index) => {
+                      if (index >= folder) {
+                        return <Reply key={item.id} reply={item} />;
+                      }
+                    })}
+                  </div>
+                </AccordionDetails>
+              </Accordion>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <Divider className="m-3 row" />
     </>
