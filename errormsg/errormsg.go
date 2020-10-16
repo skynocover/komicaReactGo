@@ -96,6 +96,12 @@ var ErrorQuerySQL = Error{
 	ErrorMessage: "Query SQL fail",
 }
 
+// ErrorDecrypt ...
+var ErrorDecrypt = Error{
+	ErrorCode:    1003,
+	ErrorMessage: "Decrypt fail",
+}
+
 // ErrorParsingJSON ...
 var ErrorParsingJSON = Error{
 	ErrorCode:    1003,
@@ -118,4 +124,10 @@ var ErrorParamImage = Error{
 var ErrorReportEmpty = Error{
 	ErrorCode:    2002,
 	ErrorMessage: "回報內容不可空白",
+}
+
+// ErrorPostImg ...
+var ErrorPostImg = Error{
+	ErrorCode:    2003,
+	ErrorMessage: "附圖網址無效",
 }

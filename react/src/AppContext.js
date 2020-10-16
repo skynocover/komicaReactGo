@@ -85,12 +85,13 @@ const AppProvider = ({ children }) => {
 
   // api ...
   const Report = (reportid, reason, content) => {
+    let enc = EncryptJson({
+      reason,
+      content,
+      reportid,
+    });
     axios
-      .post('/report/post', {
-        reason,
-        content,
-        reportid,
-      })
+      .post('/report/post', enc)
       .then((res) => {
         // console.table(res.data);
         if (res.data.errorCode === 0) {

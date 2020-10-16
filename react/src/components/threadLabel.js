@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
-import "../mainstyle.css";
+import React, { useContext } from 'react';
+import '../mainstyle.css';
 
-import IconButton from "@material-ui/core/IconButton";
-import ReportIcon from "@material-ui/icons/Report";
-import ReplyRoundedIcon from "@material-ui/icons/ReplyRounded";
-import Link from "@material-ui/core/Link";
+import IconButton from '@material-ui/core/IconButton';
+import ReportIcon from '@material-ui/icons/Report';
+import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
+import Link from '@material-ui/core/Link';
 
-import { AppContext } from "../AppContext";
-import Postform from "./postform.js";
-import Reportform from "./reportform.js";
+import { AppContext } from '../AppContext';
+import Postform from './postform.js';
+import Reportform from './reportform.js';
 
 export default function ThreadLabel({ post }) {
   const appCtx = useContext(AppContext);
@@ -23,7 +23,6 @@ export default function ThreadLabel({ post }) {
       <span className="text-info">
         {post.title ? (
           <Link
-            //href={`/#/thread/take?id=${post.id}`}
             onClick={() => {
               window.location.href = `/#/?id=${post.id}`;
               appCtx.getthread();

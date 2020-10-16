@@ -8,6 +8,7 @@ import (
 	"komicaRG/database"
 	"komicaRG/errormsg"
 	"log"
+	"net/url"
 	"strings"
 
 	"github.com/valyala/fasthttp"
@@ -40,7 +41,10 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 
 	dec, err := aes.Decrypt(ctx.PostBody(), key)
 	if err != nil {
-		log.Println(err)
+		jsonfail := errormsg.ErrorDecrypt
+		ctx.Write(jsonfail.ToBytes())
+		logs.Content = jsonfail.ErrorMessage
+		logs.InserSQL()
 		return
 	}
 
@@ -69,6 +73,17 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	if post.WithImg {
+		_, err = url.ParseRequestURI(post.Image)
+		if err != nil {
+			jsonfail := errormsg.ErrorPostImg
+			ctx.Write(jsonfail.ToBytes())
+			logs.Content = jsonfail.ErrorMessage
+			logs.InserSQL()
+			return
+		}
+	}
+
 	if post.Name == "" {
 		post.Name = "某個懶得打名稱的人"
 	}
@@ -94,6 +109,5 @@ func ThreadPost(ctx *fasthttp.RequestCtx) {
 	}
 
 	success := errormsg.SUCCESS
-
 	ctx.Write(success.ToBytes())
 }

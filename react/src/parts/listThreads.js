@@ -46,7 +46,9 @@ const Reply = ({ reply }) => {
 
 const Thread = ({ thread }) => {
   const classes = useStyles();
-  const folder = 3;
+  const appCtx = useContext(AppContext);
+  const folder = appCtx.SingleThread ? thread.reply?.length : 3;
+
   return (
     <>
       <div className="row pt-2 justify-content-center">
@@ -64,39 +66,40 @@ const Thread = ({ thread }) => {
         </div>
       </div>
       {thread.reply != null && (
-        <div className="row justify-content-center">
-          <div className="container">
-            {thread.reply.map(
-              (item, index) =>
-                index < folder && <Reply key={item.id} reply={item} />,
-            )}
-            {/* {thread.reply.filter((index) => {
-              return index < folder;
-            })} */}
-            {thread.reply.length > folder && (
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography className={classes.heading}>
-                    被隱藏的回應
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div className="container">
-                    {thread.reply.map((item, index) => {
-                      if (index >= folder) {
-                        return <Reply key={item.id} reply={item} />;
-                      }
-                    })}
-                  </div>
-                </AccordionDetails>
-              </Accordion>
-            )}
+        <>
+          <div className="row justify-content-center">
+            <div className="container">
+              {thread.reply
+                .filter((item, index) => index < folder)
+                .map((item) => (
+                  <Reply key={item.id} reply={item} />
+                ))}
+            </div>
           </div>
-        </div>
+          {thread.reply.length > folder && (
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography className={classes.heading}>
+                  被隱藏的回應
+                </Typography>
+              </AccordionSummary>
+
+              <AccordionDetails>
+                <div className="container-fluid">
+                  {thread.reply
+                    .filter((item, index) => index >= folder)
+                    .map((item) => (
+                      <Reply key={item.id} reply={item} />
+                    ))}
+                </div>
+              </AccordionDetails>
+            </Accordion>
+          )}
+        </>
       )}
 
       <Divider className="m-3 row" />

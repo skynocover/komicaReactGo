@@ -1,8 +1,8 @@
-import React from "react";
-import "../mainstyle.css";
+import React from 'react';
+import '../mainstyle.css';
 
-import Button from "@material-ui/core/Button";
-import { Divider } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
+import { Divider } from '@material-ui/core';
 
 export default () => {
   return (
@@ -36,7 +36,7 @@ export default () => {
           Underlords
         </Button>
       </div>
-      <Divider/>
+      <Divider />
     </div>
   );
 };

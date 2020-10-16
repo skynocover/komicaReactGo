@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import "../mainstyle.css";
+import React, { useContext } from 'react';
+import '../mainstyle.css';
 
-import Pagination from "@material-ui/lab/Pagination";
-import { AppContext } from "../AppContext";
+import Pagination from '@material-ui/lab/Pagination';
+import { AppContext } from '../AppContext';
 
 const Pages = () => {
   const appCtx = useContext(AppContext);

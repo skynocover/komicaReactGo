@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import "../mainstyle.css";
-import { AppContext } from "../AppContext";
-import Postform from "../components/postform";
-import Typography from "@material-ui/core/Typography";
+import React, { useContext } from 'react';
+import '../mainstyle.css';
+import { AppContext } from '../AppContext';
+import Postform from '../components/postform';
+import Typography from '@material-ui/core/Typography';
 
 export default () => {
   const appCtx = useContext(AppContext);

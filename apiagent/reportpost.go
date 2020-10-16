@@ -2,6 +2,7 @@ package apiagent
 
 import (
 	"encoding/json"
+	"komicaRG/aes"
 	"komicaRG/database"
 	"komicaRG/errormsg"
 	"log"
@@ -32,8 +33,17 @@ func ReportPost(ctx *fasthttp.RequestCtx) {
 		IP: ip,
 	}
 
+	dec, err := aes.Decrypt(ctx.PostBody(), key)
+	if err != nil {
+		jsonfail := errormsg.ErrorDecrypt
+		ctx.Write(jsonfail.ToBytes())
+		logs.Content = jsonfail.ErrorMessage
+		logs.InserSQL()
+		return
+	}
+
 	var report report
-	if err := json.Unmarshal(ctx.PostBody(), &report); err != nil {
+	if err := json.Unmarshal(dec, &report); err != nil {
 		jsonfail := errormsg.ErrorParsingJSON
 		ctx.Write(jsonfail.ToBytes())
 		logs.Content = jsonfail.ErrorMessage
@@ -49,7 +59,7 @@ func ReportPost(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	_, err := database.DB.Exec("INSERT INTO `reports` (`ip`,`reason`,`contents`,`report_post_id`) VALUES(?,?,?,?)", ip, report.Reason, report.Content, report.ID)
+	_, err = database.DB.Exec("INSERT INTO `reports` (`ip`,`reason`,`contents`,`report_post_id`) VALUES(?,?,?,?)", ip, report.Reason, report.Content, report.ID)
 	if err != nil {
 		log.Println("insert the sql fail, err: ", err)
 		sqlfail := errormsg.ErrorInsertSQL

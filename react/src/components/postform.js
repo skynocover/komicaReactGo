@@ -1,13 +1,13 @@
-import React, { useContext } from "react";
-import "../mainstyle.css";
-import { makeStyles } from "@material-ui/core/styles";
-import Fab from "@material-ui/core/Fab";
-import Checkbox from "@material-ui/core/Checkbox";
-import NavigationIcon from "@material-ui/icons/Navigation";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import TextField from "@material-ui/core/TextField";
-import { Formik, useField } from "formik";
-import { AppContext } from "../AppContext";
+import React, { useContext } from 'react';
+import '../mainstyle.css';
+import { makeStyles } from '@material-ui/core/styles';
+import Fab from '@material-ui/core/Fab';
+import Checkbox from '@material-ui/core/Checkbox';
+import NavigationIcon from '@material-ui/icons/Navigation';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import TextField from '@material-ui/core/TextField';
+import { Formik, useField } from 'formik';
+import { AppContext } from '../AppContext';
 
 const MuiCheckbox = ({ ...props }) => {
   const [field] = useField(props.name);
@@ -26,13 +26,14 @@ const useStyles = makeStyles((theme) => ({
 const Postform = ({ parent }) => {
   const appCtx = useContext(AppContext);
   const classes = useStyles();
+  var RegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
   return (
     <Formik
       initialValues={{
-        title: "",
-        name: "",
-        content: "",
-        image: "",
+        title: '',
+        name: '',
+        content: '',
+        image: '',
         withImage: false,
         sage: false,
       }}
@@ -40,13 +41,15 @@ const Postform = ({ parent }) => {
       validate={(values) => {
         const errors = {};
         if (!parent && !values.title) {
-          errors.title = "標題必填";
+          errors.title = '標題必填';
         } else if (!values.content) {
-          errors.content = "內文必填";
+          errors.content = '內文必填';
         } else if (values.image && !values.withImage) {
-          errors.image = "附圖請符合勾選規則"
+          errors.image = '附圖請符合勾選規則';
         } else if (!values.image && values.withImage) {
-          errors.image = "附圖請符合勾選規則"
+          errors.image = '附圖請符合勾選規則';
+        } else if (values.image && !RegExp.test(values.image)) {
+          errors.image = '無效附圖網址';
         }
         return errors;
       }}
@@ -70,7 +73,7 @@ const Postform = ({ parent }) => {
             <div className="col-lg-5 col-sm-8 col-md-6 col-12 d-flex flex-column bd-highlight ">
               {!parent && (
                 <TextField
-                  error={errors.title&&true}
+                  error={errors.title && true}
                   helperText={errors.title}
                   name="title"
                   label="標題"
@@ -79,7 +82,7 @@ const Postform = ({ parent }) => {
                   onChange={handleChange}
                 />
               )}
-              
+
               <TextField
                 name="name"
                 label="名稱"
@@ -88,7 +91,7 @@ const Postform = ({ parent }) => {
                 onChange={handleChange}
               />
               <TextField
-                error={errors.content&&true}
+                error={errors.content && true}
                 helperText={errors.content}
                 name="content"
                 onChange={handleChange}
@@ -100,7 +103,7 @@ const Postform = ({ parent }) => {
                 placeholder="可使用markdown語法"
               />
               <TextField
-                error={errors.image&&true}
+                error={errors.image && true}
                 helperText={errors.image}
                 name="image"
                 label="附加圖檔網址"
@@ -108,32 +111,32 @@ const Postform = ({ parent }) => {
                 value={values.image}
                 onChange={handleChange}
               />
-              <div className="d-flex" >
-              <FormControlLabel
-                control={
-                  <MuiCheckbox
-                    checked={"withImage"}
-                    onChange={handleChange}
-                    name="withImage"
-                    color="primary"
-                  />
-                }
-                label="附圖"
-              />
-              {parent && (
+              <div className="d-flex">
                 <FormControlLabel
                   control={
                     <MuiCheckbox
-                      checked={"sage"}
+                      checked={'withImage'}
                       onChange={handleChange}
-                      name="sage"
+                      name="withImage"
+                      color="primary"
                     />
                   }
-                  name="sage"
-                  label="sage"
+                  label="附圖"
                 />
-              )}
-              <div className="flex-fill" />
+                {parent && (
+                  <FormControlLabel
+                    control={
+                      <MuiCheckbox
+                        checked={'sage'}
+                        onChange={handleChange}
+                        name="sage"
+                      />
+                    }
+                    name="sage"
+                    label="sage"
+                  />
+                )}
+                <div className="flex-fill" />
                 <Fab
                   variant="extended"
                   color="primary"
