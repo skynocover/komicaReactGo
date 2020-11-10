@@ -14,7 +14,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-var key = []byte("0123456789abcdef0123456789abcdef")
+var key = []byte("abcdefghijklmnopqrstuvwxyz0123456")
 
 // ThreadPost get the post
 func ThreadPost(ctx *fasthttp.RequestCtx) {

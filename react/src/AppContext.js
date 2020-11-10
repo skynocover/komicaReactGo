@@ -11,7 +11,7 @@ import Postform from './components/postform.js';
 
 const AppContext = React.createContext();
 
-const _secret = '0123456789abcdef0123456789abcdef';
+const _secret = 'abcdefghijklmnopqrstuvwxyz0123456';
 const EncryptJson = (data) => {
   const key = CryptoJS.enc.Utf8.parse(_secret);
   const iv = GetRandomString(16);
@@ -91,7 +91,7 @@ const AppProvider = ({ children }) => {
       reportid,
     });
     axios
-      .post('/report/post', enc)
+      .post('/api/report/post', enc)
       .then((res) => {
         // console.table(res.data);
         if (res.data.errorCode === 0) {
@@ -120,7 +120,7 @@ const AppProvider = ({ children }) => {
       parent,
     });
     axios
-      .post('/thread/post', enc)
+      .post('/api/thread/post', enc)
       .then((res) => {
         // console.table(res.data);
         if (res.data.errorCode === 0) {
@@ -169,7 +169,7 @@ const AppProvider = ({ children }) => {
       return;
     }
     axios
-      .get('/thread/get' + url.slice(2))
+      .get('/api/thread/get' + url.slice(2))
       .then((res) => {
         if (res.data.errorCode === 0) {
           // console.table(res.data);

@@ -19,10 +19,10 @@ func main() {
 	}
 
 	router := fasthttprouter.New()
-	router.NotFound = fasthttp.FSHandler("./react/build", 0)
-	router.POST("/thread/post", apiagent.ThreadPost)
-	router.GET("/thread/get", apiagent.ThreadGet)
-	router.POST("/report/post", apiagent.ReportPost)
+	// router.NotFound = fasthttp.FSHandler("./react/build", 0)
+	router.POST("/api/thread/post", apiagent.ThreadPost)
+	router.GET("/api/thread/get", apiagent.ThreadGet)
+	router.POST("/api/report/post", apiagent.ReportPost)
 	if err := fasthttp.ListenAndServe(":"+config.Config.Server.Listen, router.Handler); err != nil {
 		fmt.Println("start fasthttp fail:", err.Error())
 	}

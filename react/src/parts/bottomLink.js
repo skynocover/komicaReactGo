@@ -33,7 +33,7 @@ export default () => {
           <Button onClick={appCtx.toggle(true, <Reportform />)}>
             錯誤回報
           </Button>
-          <Button href="https://github.com/skynocover" target="_blank">
+          <Button href="https://github.com/skynocover/komicaReactGo" target="_blank">
             Github
           </Button>
           <Button
